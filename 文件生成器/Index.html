@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Mod.txt文件生成器-朝歌</title>
+    <!-- 
+        Author:MikesonZhang
+        Nationality:China
+        City:NeiJiang,SiChuan Province
+        WriteTime:2022,04,09 23:37
+        v1Time:2022,04,10 19:37
+
+        Developer notes:
+            1.This program only uses a little string splicing technology without any technical content. 
+            It is just convenient for non programmer players to group and arrange the game vehicle mod like a fool
+            2.Technology library used: jQuery、VUE3.0、Asif Mughal's HTML+CSS
+
+     -->
+	<link rel="stylesheet" type="text/css" href="css/normalize.css" /><!--CSS RESET-->
+	<link rel="stylesheet" type="text/css" href="css/htmleaf-demo.css"><!--演示页面样式，使用时可以不引用-->
+	<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+	<!--ssMenu CSS-->
+    <link rel="stylesheet" href="css/ss-menu.css">
+    <link rel="stylesheet" href="css/demo.css">
+  <script src="js/vue.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/my.css">
+  
+</head>
+<body>
+	<!--Start Side Sticky Menu-->
+	<nav class="ss-menu ">
+	 <ul>
+        <span class="ss-badge">热</span>
+	    <li><a href="Index.html"><i class="fa fa-car"></i>车辆Mod.txt设置</a></li>
+	    <li><a href="Building.html"> <i class="fa fa-building"></i> 建筑Mod.txt生成 </a></li>
+	    <li><a href="Track.html"><i class="fa fa-train"></i> 轨道Mod.txt生成</a></li>
+	    <li><a href="Index.html"><i class="fa fa-star"></i> 更多，敬请期待!</a></li>
+	 </ul>
+	</nav>
+	<!--End Side Sticky Menu-->
+	<div class="htmleaf-container">
+		<header class="htmleaf-header">
+			<h1>Nimby Rails Mod.txt File Tools
+            <span>Used to facilitate setting up files</span>
+            <span>车辆Mod.txt设置页面</span>
+            </h1>
+			<div class="htmleaf-links">
+				<a class="htmleaf-icon icon-htmleaf-home-outline" href="index.html" title="TencentQQ Contact Me" target="_self"><span> 联系我</span></a>
+				<a class="htmleaf-icon icon-htmleaf-arrow-forward-outline" href="tencent://message/?uin=2929429848&Site=&Menu=yes" title="返回下载页" target="_blank"><span> 返回下载页</span></a>
+			</div>
+		</header>
+		<main class="ss-main">
+         <article>
+            <section class="theme-picker">
+               <h2> 选择风格 </h2>
+               <span class="red"> </span>
+               <span class="yellow"> </span>
+               <span class="blue"> </span>
+               <span class="green"> </span>
+               <span class="orange"> </span>
+               <span class="brown"> </span>
+               <span class="teal"> </span>
+               <span class="purple"> </span>
+               <div class="ad-unit">
+            </section>
+            <h1 id="MyTitle">车辆Mod.txt文件生成器</h1>
+            <div id="executeForm" style="margin-left: 20px;">
+                实时生成显示
+                <br>
+                <br>
+                <textarea id="resultTxt" cols="40">{{ModTXT}}</textarea>
+                <input type="button" onclick="copy();" value="复制" style="height: 43px;width: 50px;"></input>
+                点我以后按Ctrl+C复制！
+                <script type="text/javascript">
+                    function copy() {
+                      var e = document.getElementById("resultTxt");
+                      e.select(); // 选择对象
+                      document.execCommand("Copy"); // 执行浏览器复制命令
+                    }
+                </script>
+                <br>
+                <br>
+
+                 模式选择：
+                 <div class="dropList">
+                    <select class="selectType" autocomplete="off" onchange="checkSelect();">
+                        <option value="ModMeta" selected="selected">ModMeta</option>
+                        <option value="TrainUnit">TrainUnit</option>
+                        <option value="TrainMultipleUnit">TrainMultipleUnit</option>
+                        <option value="TrainMultipleUnit">编组生成器</option>
+                    </select>
+                </div>
+                <div class="AuthorAll" style="margin-top: 20px;">
+                    <div class="Author1">
+                      <br>
+                      [ModMeta]生成
+                      <button @click="ModMetaGenerate" style="height: 30px;width: 80px;">点击生成</button>
+                      <br><br>
+                      *-----------基础设置-------------*
+                      <br><br>
+                      Mod名称：<input type="text" id="InputModName" v-model="InputModName"/><br><br>
+                      Mod作者：<input type="text" id="InputModAuthor" v-model="InputModAuthor"/><br><br>
+                      Mod描述：<input type="text" id="InputModDesc" v-model="InputModDesc"/><br><br>
+                      Mod版本号：<input type="text" id="InputModVersion" v-model="InputModVersion"/><br><br>
+                    </div>
+                    <div class="Author1 active">
+                      <br>  
+                      [ModUnit]生成
+                      <button @click="ModUnitGenerate" style="height: 30px;width: 80px;">点击生成</button>
+                      <br><br>
+                      *-----------基础设置-------------*
+                      <br><br>
+                      单元id：<input type="text" id="InputUnitId" v-model="InputUnitId"/>&nbsp;&nbsp; 注:不允许重复<br><br>
+                      本地名称：<input type="text" id="InputModAuthor" v-model="InputUnitNameLoc"/>&nbsp;&nbsp; 可使用所有字符串<br><br>
+                      英语名称：<input type="text" id="InputModDesc" v-model="InputUnitNameEn"/>&nbsp;&nbsp; 可使用所有字符串<br><br>
+                      单元标签：<input type="text" id="InputModVersion" v-model="InputUnitTag"/>&nbsp;&nbsp;示例:standard,broad,electric,coach,sitting,locomotive<br><br>
+                      单元长度：<input type="text" id="InputUnitLength" v-model="InputUnitLength"/>&nbsp;&nbsp; 注:1.0m-30.0m<br><br>
+                      单元宽度：<input type="text" id="InputUnitWidth" v-model="InputUnitWidth"/>&nbsp;&nbsp; 注:1.0m-3.75m<br><br>
+                      最大速度：<input type="text" id="InputUnitMaxSpeed" v-model="InputUnitMaxSpeed"/>&nbsp;&nbsp; 注:10km/h-1万km/h<br><br>
+                      最大功率：<input type="text" id="InputUnitPower" v-model="InputUnitPower"/>&nbsp;&nbsp; 注:0kw-10万kw<br><br>
+                      单元空重：<input type="text" id="InputUnitEmptyMass" v-model="InputUnitEmptyMass"/>&nbsp;&nbsp; 注:1000kg-1亿kg<br><br>
+                      单元价格：<input type="text" id="InputUnitPrice" v-model="InputUnitPrice"/>&nbsp;&nbsp; 注:0-10亿/cash<br><br>
+                      最大载客：<input type="text" id="InputUnitMaxPax" v-model="InputUnitMaxPax"/>&nbsp;&nbsp; 注:0-1000人<br><br>
+                      站立载客：<input type="text" id="InputUnitStanDingPax" v-model="InputUnitStanDingPax"/>&nbsp;&nbsp; 注:0-1000人<br><br>
+                      单元门数：<input type="text" id="InputUnitPaxDoorsPerSide" v-model="InputUnitPaxDoorsPerSide"/>&nbsp;&nbsp; 注:0-100扇<br><br>
+                      允许玩家组合：<input type="text" id="InputUnitAllowPlayerComposition" v-model="InputUnitAllowPlayerComposition"/>&nbsp;&nbsp; 注:不建议修改，默认为false<br><br>
+                      
+                      每人每KM耗价：<input type="text" id="InputUnitCostPerKmPerPax" v-model="InputUnitCostPerKmPerPax"/>&nbsp;&nbsp; 注:0-1000/cash<br><br>
+                      每人每日耗价：<input type="text" id="InputUnitCostPerDay" v-model="InputUnitCostPerDay"/>&nbsp;&nbsp; 注:0-10万/cash<br><br>
+                      *-----------贴图设置-------------*<br>
+                      基础纹理：<input type="text" id="InputUnitTexBase" v-model="InputUnitTexBase"/>&nbsp;&nbsp; 注:请填写相对路径<br><br>
+                      顶部纹理：<input type="text" id="InputUnitTexTop" v-model="InputUnitTexTop"/>&nbsp;&nbsp; 注:请填写相对路径<br><br>
+                      样式纹理：<input type="text" id="InputUnitTexDecors" v-model="InputUnitTexDecors"/>&nbsp;&nbsp; 注:请填写相对路径<br><br>
+                      *-----------纹理设置-----------*<br>
+                      刷新基础纹理：<input type="text" id="InputUnitRecolorBase" v-model="InputUnitRecolorBase"/>&nbsp;&nbsp; 注:true/false<br><br>
+                      刷新装饰纹理：<input type="text" id="InputUnitRecolorDecor" v-model="InputUnitRecolorDecor"/>&nbsp;&nbsp; 注:true/false<br><br>
+                    </div>
+                    <div class="Author1 active">
+                      <br>  
+                      [TrainMultipleUnit]生成
+                      <button @click="ModMultipleUnitGenerate" style="height: 30px;width: 80px;">点击生成</button>
+                      <br><br>
+                      *-----------基础设置-------------*
+                      <br><br>
+                      组合单元id：<input type="text" id="InputMUnitId" v-model="InputMUnitId"/>&nbsp;&nbsp; 注:不允许重复<br><br>
+                      组合本地名称：<input type="text" id="InputMUnitNameLoc" v-model="InputMUnitNameLoc"/>&nbsp;&nbsp; 注:允许所有字符串<br><br>
+                      组合英文名称：<input type="text" id="InputMUnitNameEn" v-model="InputMUnitNameEn"/>&nbsp;&nbsp; 注:允许所有字符串<br><br>
+                      组合标签：<input type="text" id="InputMUnitTag" v-model="InputMUnitTag"/>&nbsp;&nbsp; 示例:standard,broad,electric,coach,sitting,locomotive<br><br>
+                      本地语言描述：<input type="text" id="InputMUnitDescriptionLoc" v-model="InputMUnitDescriptionLoc"/>&nbsp;&nbsp; 注:允许所有字符串<br><br>
+                      英语语言描述：<input type="text" id="InputMUnitDescriptionEn" v-model="InputMUnitDescriptionEn"/>&nbsp;&nbsp; 注:允许所有字符串<br><br>
+                      推出年份：<input type="text" id="InputMUnitIntroduced" v-model="InputMUnitIntroduced"/>&nbsp;&nbsp; 注:允许所有整型<br><br>
+                      退役年份：<input type="text" id="InputMUnitRetired" v-model="InputMUnitRetired"/>&nbsp;&nbsp; 注:允许所有整型<br><br>
+                      运营国家：<input type="text" id="InputMUnitCountriesOperated" v-model="InputMUnitCountriesOperated"/>&nbsp;&nbsp; 注:ISO规定的3166个2长度的国家代码<br><br>
+                      制造国家：<input type="text" id="InputMUnitCountriesBuilt" v-model="InputMUnitCountriesBuilt"/>&nbsp;&nbsp; 注:ISO规定的3166个2长度的国家代码<br><br>
+                      照片：<input type="text" id="InputMUnitPhoto" v-model="InputMUnitPhoto"/>&nbsp;&nbsp; 注:这里填写绝对路径，512X512的jpg或者png<br><br>
+                      默认车次代码：<input type="text" id="InputMUnitDefaultCode" v-model="InputMUnitDefaultCode"/>&nbsp;&nbsp; 注:允许所有字符串，建议CDGZTKSX等类似车次字母<br><br>
+                      默认车号代码：<input type="text" id="InputMUnitDefaultName" v-model="InputMUnitDefaultName"/>&nbsp;&nbsp; 注:允许所有字符串，建议SS3-8011等类似车号<br><br>
+                      *-----------编组设置-------------*
+                      <br>
+                      编组序号：<input type="text" id="InputMUnitConsistCode" v-model="InputMUnitConsistCode"/>&nbsp;&nbsp; 注:不允许重复<br><br>
+                      编组名称：<input type="text" id="InputMUnitConsistName" v-model="InputMUnitConsistName"/>&nbsp;&nbsp; 注:建议不重复<br><br>
+                      编组内容：<input type="text" id="InputMUnitConsistContent" v-model="InputMUnitConsistContent"/>&nbsp;&nbsp; 注：请将您的车辆单元id写在这里以,分割 例如：Shen24-Head,Shen24-Mid,Shen24-Back,<br><br>
+                      
+                    </div>
+                    <div class="Author1 active">
+                      <br>  
+                      [非创意工坊作者玩家]编组生成器
+                      <button @click="ConsistGenerate" style="height: 30px;width: 80px;">点击生成</button>
+                      <br><br>
+                      *-----------基础设置-------------*
+                      正在积极开发中！
+                      <br><br>
+                    </div>
+                </div>
+              </div>
+         </article>
+        
+    </main>
+    
+		<div class="related">
+		    <h7>
+          <pre>
+          Author:MikesonZhang
+          Nationality:China
+          City:NeiJiang,SiChuan Province
+          WriteTime:2022,04,09 23:37
+          v1Time:2022,04,10 19:37
+          </pre>
+        </h7>
+		</div>
+	</div>
+	
+	<script src="js/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="js/jquery.ss.menu.js"></script>
+	<script>
+	 $(document).ready(function(){
+	   $(".ss-menu").ssMenu();
+	 }); 
+	</script>
+	<script>
+         $(function(){
+           var ssMenu = $(".ss-menu");
+           var theme = $(".theme-picker").find("span");
+            $(theme).click(function(y){
+              y = $(this).attr("class");
+              $(ssMenu).removeClass().addClass("ss-menu " +y); //Aaah what a nice 
+            });
+            $(".set-default").click(function(){
+                   $(ssMenu).removeClass().addClass("ss-menu default");
+            });
+         });
+         
+  </script>
+
+  <script>
+    var MikesonV1 = {
+      PreModMeta:"[ModMeta]\nschema=1",
+      ModMetaName:"\nname=",
+      ModMetaAuthor:"\nauthor=",
+      ModMetaDesc:"\ndesc=",
+      ModMetaVersion:"\nversion=",
+
+      PreModUnit:"\n\n[TrainUnit]\nschema=2",
+      ModUnitId:"\nid=",
+      ModUnitNameLoc:"\nname_loc=",
+      ModUnitNameEn:"\nname_en=",
+      ModUnitTag:"\ntags=",
+      ModUnitLength:"\nlength=",
+      ModUnitWidth:"\nwidth=",
+      ModUnitMaxSpeed:"\nmax_speed=",
+      ModUnitPower:"\npower=",
+      ModUnitEmptyMass:"\nempty_mass=",
+      ModUnitPrice:"\nprice=",
+      ModUnitMaxPax:"\nmax_pax=",
+      ModUnitStanDingPax:"\nstanding_pax=",
+      ModUnitPaxDoorsPerSide:"\npax_doors_per_side=",
+      ModUnitAllowPlayerComposition:"\nallow_player_composition=",
+      ModUnitCostPerKmPerPax:"\ncost_per_km_per_pax=",
+      ModUnitCostPerDay:"\ncost_per_day=",
+      ModUnitTexBase:"\ntex_base=",
+      ModUnitTexTop:"\ntex_top=",
+      ModUnitTexDecors:"\ntex_decors=",
+      ModUnitRecolorBase:"\nrecolor_base=",
+      ModUnitRecolorDecor:"\nrecolor_decor=",
+      SubModUnit:"\ntex_m_width=30\ntex_m_height=3.75",
+
+      PreModMUnit:"\n\n[TrainMultipleUnit]\nschema=2",
+      ModMUnitId:"\nid=",
+      ModMUnitNameLoc:"\nname_loc",
+      ModMUnitNameEn:"\nname_en=",
+      ModMUnitTag:"\ntags=",
+      ModMUnitDescriptionLoc:"\ndescription_loc=",
+      ModMUnitDescriptionEn:"\ndescription_en=",
+      ModMUnitIntroduced:"\nintroduced=",
+      ModMUnitRetired:"\nretired=",
+      ModMUnitCountriesBuilt:"\ncountries_built=",
+      ModMUnitCountriesOperated:"\ncountries_operated=",
+      ModMUnitPhoto:"\nphoto=",
+      ModMUnitDefaultCode:"\ndefault_code=",
+      ModMUnitDefaultName:"\ndefault_name=",
+      ModMUnitComposition:"\ncomposition=",
+    }
+    var executeForm = new Vue({
+      el:"#executeForm",
+      data:{
+          ModTXT:"",
+
+          ModMetaTXT:"",
+          InputModName:"",
+          InputModAuthor:"",
+          InputModDesc:"",
+          InputModVersion:"",
+
+          ModUnitTXT:"",
+          InputUnitId:"",
+          InputUnitNameLoc:"",
+          InputUnitNameEn:"",
+          InputUnitTag:"",
+          InputUnitLength:"",
+          InputUnitWidth:"",
+          InputUnitMaxSpeed:"",
+          InputUnitPower:"",
+          InputUnitEmptyMass:"",
+          InputUnitPrice:"",
+          InputUnitMaxPax:"",
+          InputUnitStanDingPax:"0",
+          InputUnitPaxDoorsPerSide:"0",
+          InputUnitAllowPlayerComposition:"false",
+          InputUnitCostPerKmPerPax:"",
+          InputUnitCostPerDay:"",
+          InputUnitTexBase:"",
+          InputUnitTexTop:"",
+          InputUnitTexDecors:"",
+          InputUnitRecolorBase:"",
+          InputUnitRecolorDecor:"",
+
+          ModMUnitTXT:"",
+          InputMUnitId:"",
+          InputMUnitNameLoc:"",
+          InputMUnitNameEn:"",
+          InputMUnitTag:"",
+          InputMUnitDescriptionLoc:"",
+          InputMUnitDescriptionEn:"",
+          InputMUnitIntroduced:"",
+          InputMUnitRetired:"",
+          InputMUnitCountriesBuilt:"",
+          InputMUnitCountriesOperated:"",
+          InputMUnitPhoto:"",
+          InputMUnitDefaultCode:"",
+          InputMUnitDefaultName:"",
+          InputMUnitConsistCode:"",
+          InputMUnitConsistName:"",
+          InputMUnitConsistContent:"",
+
+      },
+      methods: {
+        ModMetaGenerate:function(){
+          this.ModMetaTXT = "";
+          this.ModMetaTXT += MikesonV1.PreModMeta;
+          this.ModMetaTXT += MikesonV1.ModMetaName;
+          this.ModMetaTXT += this.InputModName;
+          this.ModMetaTXT += MikesonV1.ModMetaAuthor;
+          this.ModMetaTXT += this.InputModAuthor;
+          this.ModMetaTXT += MikesonV1.ModMetaDesc;
+          this.ModMetaTXT += this.InputModDesc;
+          this.ModMetaTXT += MikesonV1.ModMetaVersion;
+          this.ModMetaTXT += this.InputModVersion;
+          this.ModTXT = this.ModMetaTXT;
+        },
+        ModUnitGenerate:function(){
+          this.ModUnitTXT += MikesonV1.PreModUnit;
+          this.ModUnitTXT += MikesonV1.ModUnitId;
+          this.ModUnitTXT += this.InputUnitId;
+          this.ModUnitTXT += MikesonV1.ModUnitNameLoc;
+          this.ModUnitTXT += this.InputUnitNameLoc;
+          this.ModUnitTXT += MikesonV1.ModUnitNameEn;
+          this.ModUnitTXT += this.InputUnitNameEn;
+          if(this.InputUnitTag!=""){
+            this.ModUnitTXT += MikesonV1.ModUnitTag;
+            this.ModUnitTXT += this.InputUnitTag;
+          }
+          this.ModUnitTXT += MikesonV1.ModUnitLength;
+          this.ModUnitTXT += this.InputUnitLength;
+          this.ModUnitTXT += MikesonV1.ModUnitWidth;
+          this.ModUnitTXT += this.InputUnitWidth;
+          this.ModUnitTXT += MikesonV1.ModUnitMaxSpeed;
+          this.ModUnitTXT += this.InputUnitMaxSpeed;
+          this.ModUnitTXT += MikesonV1.ModUnitPower;
+          this.ModUnitTXT += this.InputUnitPower;
+          this.ModUnitTXT += MikesonV1.ModUnitEmptyMass;
+          this.ModUnitTXT += this.InputUnitEmptyMass;
+          this.ModUnitTXT += MikesonV1.ModUnitPrice;
+          this.ModUnitTXT += this.InputUnitPrice;
+          this.ModUnitTXT += MikesonV1.ModUnitMaxPax;
+          this.ModUnitTXT += this.InputUnitMaxPax;
+          this.ModUnitTXT += MikesonV1.ModUnitStanDingPax;
+          this.ModUnitTXT += this.InputUnitStanDingPax;
+          this.ModUnitTXT += MikesonV1.ModUnitPaxDoorsPerSide;
+          this.ModUnitTXT += this.InputUnitPaxDoorsPerSide;
+          this.ModUnitTXT += MikesonV1.ModUnitCostPerKmPerPax;
+          this.ModUnitTXT += this.InputUnitCostPerKmPerPax;
+          this.ModUnitTXT += MikesonV1.ModUnitCostPerDay;
+          this.ModUnitTXT += this.InputUnitCostPerDay;
+          this.ModUnitTXT += MikesonV1.ModUnitTexBase;
+          this.ModUnitTXT += this.InputUnitTexBase;
+          this.ModUnitTXT += MikesonV1.ModUnitTexTop;
+          this.ModUnitTXT += this.InputUnitTexTop;
+          this.ModUnitTXT += MikesonV1.ModUnitTexDecors;
+          this.ModUnitTXT += this.InputUnitTexDecors;
+          if(this.InputUnitRecolorBase!=""){
+            this.ModUnitTXT += MikesonV1.ModUnitRecolorBase;
+            this.ModUnitTXT += this.InputUnitRecolorBase;
+          }
+          if(this.InputUnitRecolorDecor!=""){
+            this.ModUnitTXT += MikesonV1.ModUnitRecolorDecor;
+            this.ModUnitTXT += this.InputUnitRecolorDecor;
+          }
+          this.ModUnitTXT += MikesonV1.SubModUnit;
+          this.ModTXT += this.ModUnitTXT;
+        },
+        ModMultipleUnitGenerate:function(){
+          this.ModMUnitTXT += MikesonV1.PreModMUnit;
+          this.ModMUnitTXT += MikesonV1.ModMUnitId;
+          this.ModMUnitTXT += this.InputMUnitId;
+          this.ModMUnitTXT += MikesonV1.ModMUnitNameLoc;
+          this.ModMUnitTXT += this.InputMUnitNameLoc;
+          this.ModMUnitTXT += MikesonV1.ModMUnitNameEn;
+          this.ModMUnitTXT += this.InputMUnitNameEn;
+          this.ModMUnitTXT += MikesonV1.ModMUnitTag;
+          this.ModMUnitTXT += this.InputMUnitTag;
+          this.ModMUnitTXT += MikesonV1.ModMUnitDescriptionLoc;
+          this.ModMUnitTXT += this.InputMUnitDescriptionLoc;
+          this.ModMUnitTXT += MikesonV1.ModMUnitDescriptionEn;
+          this.ModMUnitTXT += this.InputMUnitDescriptionEn;
+          this.ModMUnitTXT += MikesonV1.ModMUnitIntroduced;
+          this.ModMUnitTXT += this.InputMUnitIntroduced;
+          this.ModMUnitTXT += MikesonV1.ModMUnitRetired;
+          this.ModMUnitTXT += this.InputMUnitRetired;
+          this.ModMUnitTXT += MikesonV1.ModMUnitCountriesBuilt;
+          this.ModMUnitTXT += this.InputMUnitCountriesBuilt;
+          this.ModMUnitTXT += MikesonV1.ModMUnitCountriesOperated;
+          this.ModMUnitTXT += this.InputMUnitCountriesOperated;
+          this.ModMUnitTXT += MikesonV1.ModMUnitPhoto;
+          this.ModMUnitTXT += this.InputMUnitPhoto;
+          this.ModMUnitTXT += MikesonV1.ModMUnitDefaultCode;
+          this.ModMUnitTXT += this.InputMUnitDefaultCode;
+          this.ModMUnitTXT += MikesonV1.ModMUnitDefaultName;
+          this.ModMUnitTXT += this.InputMUnitDefaultName;
+          this.ModMUnitTXT += MikesonV1.ModMUnitComposition;
+          this.ModMUnitTXT += this.InputMUnitConsistCode;
+          this.ModMUnitTXT += "_loc,"
+          this.ModMUnitTXT += this.InputMUnitConsistName;
+          this.ModMUnitTXT += ","
+          this.ModMUnitTXT += this.InputMUnitConsistContent;
+          this.ModTXT += this.ModMUnitTXT;          
+        },
+        ConsistGenerate:function(){
+
+        }
+      }
+    })
+  </script>
+  <script>
+    function checkSelect(){
+        //获取select选中的text。
+        var val=$(".dropList .selectType option:selected").text();
+        //获取select选中的索引，index为索引值。
+        var index = $(".selectType").get(0).selectedIndex;
+        //操作函数
+        $(this).removeClass('active');
+        $('.Author1')
+            .eq(index)
+            .removeClass('active')
+            .siblings()
+            .addClass('active');
+        }
+  </script>
+  
+</body>
+</html>

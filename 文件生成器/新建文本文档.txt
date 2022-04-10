@@ -1,0 +1,11 @@
+<!-- 
+        Author:MikesonZhang
+        Nationality:China
+        City:NeiJiang,SiChuan Province
+        WriteTime:2022,04,09 23:37
+
+        Developer notes:
+            1.This program only uses a little string splicing technology without any technical content. 
+            It is just convenient for non programmer players to group and arrange the game vehicle mod like a fool
+            2.Technology library used: jQuery、VUE3.0、Asif Mughal's HTML+CSS
+-->
