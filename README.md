@@ -20,6 +20,7 @@ You can disconnect the network and run!
 
 -------Development log
 Author:MikesonZhang
+UI-English Translator:Ka
 Nationality:China
 City:NeiJiang,SiChuan Province
 WriteTime:2022,04,09 23:37
