@@ -10,15 +10,24 @@ zh:
 
 可以断网运行哦！
 
-en:
-This is the mod configuration file editor of NIMBY rails, a railway game in steam.
-The configuration file editor uses pure JS syntax and uses HTML + CSS + JS + jQuery + a little Vue
-In essence, it is a string splicing tool, which only adds the UI part of the page.
+Instructions:
+
+en: This is the mod configuration file editor of NIMBY rails, a railway game in steam. 
+The configuration file editor uses pure JS syntax and uses HTML + CSS + JS + jQuery + a little Vue In essence, 
+it is a string splicing tool, which only adds the UI part of the page.
 
 You can disconnect the network and run!
 
+First step : Fill in all parameters
+Step two : Click Generate
+Step three : Click Copy
+Step four : Copy to mod Txt document
+
+Over
+
 
 -------Development log
+
 Author:MikesonZhang
 UI-English Translator:Ka
 Nationality:China
