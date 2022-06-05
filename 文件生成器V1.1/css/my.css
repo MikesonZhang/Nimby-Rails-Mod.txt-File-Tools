@@ -1,0 +1,15 @@
+.MyTitle{
+    position: absolute;
+    left: 200px;
+}
+.active{
+    display:none;
+}
+.selectType{
+    font-size:13px;
+    width: 270px;
+    height: 25px;
+    }
+.dropList{
+    padding-top: 10px;
+}
